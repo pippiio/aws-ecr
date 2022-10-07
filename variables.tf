@@ -5,7 +5,7 @@ variable "config" {
       pull_accounts        = optional(list(string))
       push_accounts        = optional(list(string))
     }))
-    global_pull_accounts = optional(list(string))
-    global_push_accounts = optional(list(string))
+    global_pull_accounts = optional(list(string), [])
+    global_push_accounts = optional(list(string), [])
   })
 }

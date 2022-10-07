@@ -1,8 +1,5 @@
 locals {
-  config = defaults(var.config, {
-    global_pull_accounts = ""
-    global_push_accounts = ""
-  })
+  config = var.config
 
   repo_pull_account_arns = { for k, repo in local.config.repositories : k => repo.pull_accounts != null ? [
     for ak, ac in repo.pull_accounts : "arn:aws:iam::${ac}:root"
