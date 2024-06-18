@@ -1,7 +1,15 @@
 data "aws_iam_policy_document" "kms" {
+  for_each = length(var.private_repositories) > 0 ? toset(["private"]) : []
+
   statement {
     resources = ["*"]
-    actions   = ["kms:*"]
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
+    ]
 
     principals {
       type        = "AWS"
@@ -10,20 +18,15 @@ data "aws_iam_policy_document" "kms" {
   }
 }
 
+# kics-scan ignore-block
 resource "aws_kms_key" "ecr" {
+  for_each = data.aws_iam_policy_document.kms
+
   description         = "KMS CMK used by ecr"
   enable_key_rotation = true
-  policy              = data.aws_iam_policy_document.kms.json
+  policy              = each.value.json
 
   tags = merge(local.default_tags, {
     "Name" = "${local.name_prefix}ecr-kms"
   })
-}
-
-resource "random_pet" "ecr" {
-}
-
-resource "aws_kms_alias" "ecr" {
-  name          = "alias/ecr-kms-cmk-${random_pet.ecr.id}"
-  target_key_id = aws_kms_key.ecr.key_id
 }
