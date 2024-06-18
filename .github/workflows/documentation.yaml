@@ -1,0 +1,34 @@
+---
+name: Generate terraform docs
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Render terraform docs inside the README.md and push changes back to PR branch
+        uses: terraform-docs/gh-actions@7a62208a0090636af2df1b739da46d27fd90bdc6
+        with:
+          working-dir: .
+          output-method: inject
+          config-file: .terraform-docs.yml
+
+      - uses: planetscale/ghcommit-action@b68767a2e130a71926b365322e62b583404a5e09
+        with:
+          commit_message: "terraform-docs: automated action"
+          repo: ${{ github.repository }}
+          branch: ${{ github.head_ref || github.ref_name }}
+          file_pattern: '*.md'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
