@@ -51,6 +51,8 @@ module "ecr" {
 | [aws_ecr_repository_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository_policy) | resource |
 | [aws_ecrpublic_repository.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecrpublic_repository) | resource |
 | [aws_ecrpublic_repository_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecrpublic_repository_policy) | resource |
+| [aws_iam_access_key.artifact_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_access_key) | resource |
+| [aws_iam_user.artifact_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user) | resource |
 | [aws_kms_key.ecr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -65,13 +67,14 @@ module "ecr" {
 | <a name="input_global_pull_accounts"></a> [global\_pull\_accounts](#input\_global\_pull\_accounts) | List of accounts that can pull from all the private repositories | `list(string)` | `[]` | no |
 | <a name="input_global_push_accounts"></a> [global\_push\_accounts](#input\_global\_push\_accounts) | List of accounts that can push to all the repositories | `list(string)` | `[]` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | A prefix that will be used on all named resources. | `string` | `"pippi-"` | no |
-| <a name="input_private_repositories"></a> [private\_repositories](#input\_private\_repositories) | List of private repositories that should be created | <pre>map(object({<br>    image_tag_mutability = optional(string)<br>    pull_accounts        = optional(list(string))<br>    push_accounts        = optional(list(string))<br>  }))</pre> | `{}` | no |
-| <a name="input_public_repositories"></a> [public\_repositories](#input\_public\_repositories) | List of public repositories that should be created | <pre>map(object({<br>    about             = optional(string)<br>    architectures     = optional(list(string))<br>    description       = optional(string)<br>    logo_image_blob   = optional(string)<br>    operating_systems = optional(list(string))<br>    usage_text        = optional(string)<br>    push_accounts     = optional(list(string))<br>  }))</pre> | `{}` | no |
+| <a name="input_private_repositories"></a> [private\_repositories](#input\_private\_repositories) | List of private repositories that should be created | <pre>map(object({<br>    image_tag_mutability = optional(string)<br>    pull_accounts        = optional(list(string), [])<br>    pull_role_arns       = optional(list(string), [])<br>    push_accounts        = optional(list(string), [])<br>    push_role_arns       = optional(list(string), [])<br>    create_iam_user      = optional(bool, false)<br>  }))</pre> | `{}` | no |
+| <a name="input_public_repositories"></a> [public\_repositories](#input\_public\_repositories) | List of public repositories that should be created | <pre>map(object({<br>    about             = optional(string)<br>    architectures     = optional(list(string))<br>    description       = optional(string)<br>    logo_image_blob   = optional(string)<br>    operating_systems = optional(list(string))<br>    usage_text        = optional(string)<br>    push_accounts     = optional(list(string), [])<br>    push_role_arns    = optional(list(string), [])<br>    create_iam_user   = optional(bool, false)<br>  }))</pre> | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| <a name="output_iam_users"></a> [iam\_users](#output\_iam\_users) | List of IAM users |
 | <a name="output_private_repositories"></a> [private\_repositories](#output\_private\_repositories) | List of private ECR repositories |
 | <a name="output_public_repositories"></a> [public\_repositories](#output\_public\_repositories) | List of public ECR repositories |
 <!-- END_TF_DOCS -->

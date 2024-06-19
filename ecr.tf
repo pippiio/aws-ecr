@@ -2,7 +2,7 @@
 resource "aws_ecr_repository" "this" {
   for_each = var.private_repositories
 
-  name                 = "${local.name_prefix}${each.key}"
+  name                 = each.key
   image_tag_mutability = each.value.image_tag_mutability != null ? each.value.image_tag_mutability : "MUTABLE"
 
   encryption_configuration {
@@ -15,7 +15,7 @@ resource "aws_ecr_repository" "this" {
   }
 
   tags = merge(local.default_tags, {
-    "Name" = "${local.name_prefix}${each.key}"
+    "Name" = each.key
   })
 }
 
@@ -41,7 +41,7 @@ resource "aws_ecrpublic_repository" "this" {
   }
 
   tags = merge(local.default_tags, {
-    "Name" = "${local.name_prefix}${each.key}"
+    "Name" = each.key
   })
 }
 
