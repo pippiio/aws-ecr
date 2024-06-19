@@ -26,7 +26,7 @@ jobs:
 
       - uses: planetscale/ghcommit-action@b68767a2e130a71926b365322e62b583404a5e09
         with:
-          commit_message: "terraform-docs: automated action"
+          commit_message: "docs: terraform-docs automated action"
           repo: ${{ github.repository }}
           branch: ${{ github.head_ref || github.ref_name }}
           file_pattern: '*.md'

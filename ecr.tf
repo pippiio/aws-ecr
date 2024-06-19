@@ -19,7 +19,7 @@ resource "aws_ecr_repository" "this" {
   })
 }
 
-resource "aws_ecr_repository_policy" "private" {
+resource "aws_ecr_repository_policy" "this" {
   for_each = aws_ecr_repository.this
 
   repository = each.value.name
@@ -45,9 +45,9 @@ resource "aws_ecrpublic_repository" "this" {
   })
 }
 
-resource "aws_ecr_repository_policy" "public" {
+resource "aws_ecrpublic_repository_policy" "this" {
   for_each = aws_ecrpublic_repository.this
 
-  repository = each.value.repository_name
-  policy     = data.aws_iam_policy_document.public[each.key].json
+  repository_name = each.value.repository_name
+  policy          = data.aws_iam_policy_document.public[each.key].json
 }
