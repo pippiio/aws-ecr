@@ -6,7 +6,7 @@ data "aws_iam_policy_document" "private" {
 
     principals {
       type        = "AWS"
-      identifiers = sort(concat(local.global_pull_account_arns, local.repo_pull_account_arns[each.key]))
+      identifiers = sort(concat(concat(local.global_pull_account_arns, local.private_repo_pull_arns[each.key]), try([aws_iam_user.artifact_user[each.key].arn], [])))
     }
 
     actions = [
@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "private" {
 
     principals {
       type        = "AWS"
-      identifiers = sort(concat(local.global_push_account_arns, local.repo_push_account_arns[each.key]))
+      identifiers = sort(concat(concat(local.global_push_account_arns, local.private_repo_push_arns[each.key]), try([aws_iam_user.artifact_user[each.key].arn], [])))
     }
 
     actions = [
@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "public" {
 
     principals {
       type        = "AWS"
-      identifiers = sort(concat(local.global_push_account_arns, local.public_repo_push_account_arns[each.key]))
+      identifiers = sort(concat(concat(local.global_push_account_arns, local.public_repo_push_arns[each.key]), try([aws_iam_user.artifact_user[each.key].arn], [])))
     }
 
     actions = [

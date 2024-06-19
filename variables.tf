@@ -1,8 +1,11 @@
 variable "private_repositories" {
   type = map(object({
     image_tag_mutability = optional(string)
-    pull_accounts        = optional(list(string))
-    push_accounts        = optional(list(string))
+    pull_accounts        = optional(list(string), [])
+    pull_role_arns       = optional(list(string), [])
+    push_accounts        = optional(list(string), [])
+    push_role_arns       = optional(list(string), [])
+    create_iam_user      = optional(bool, false)
   }))
   description = "List of private repositories that should be created"
   default     = {}
@@ -16,7 +19,9 @@ variable "public_repositories" {
     logo_image_blob   = optional(string)
     operating_systems = optional(list(string))
     usage_text        = optional(string)
-    push_accounts     = optional(list(string))
+    push_accounts     = optional(list(string), [])
+    push_role_arns    = optional(list(string), [])
+    create_iam_user   = optional(bool, false)
   }))
   description = "List of public repositories that should be created"
   default     = {}
