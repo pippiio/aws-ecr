@@ -39,9 +39,9 @@ data "aws_iam_policy_document" "artifact_user" {
       "ecr:PutImage",
       "ecr:UploadLayerPart"
     ]
-    resources = [
-      try(aws_ecr_repository.this[each.key].arn, ""),
-      try(aws_ecrpublic_repository.this[each.key].arn, ""),
-    ]
+    resources = compact([
+      try(aws_ecr_repository.this[each.key].arn, null),
+      try(aws_ecrpublic_repository.this[each.key].arn, null),
+    ])
   }
 }
