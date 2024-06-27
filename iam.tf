@@ -22,11 +22,11 @@ resource "aws_iam_user_policy" "artifact_user" {
 
   name   = "ECR"
   user   = each.value.name
-  policy = data.aws_iam_policy_document.artifact_user[each.key].json
+  policy = try(data.aws_iam_policy_document.artifact_user_private[each.key].json, data.aws_iam_policy_document.artifact_user_public[each.key].json)
 }
 
-data "aws_iam_policy_document" "artifact_user" {
-  for_each = aws_iam_user.artifact_user
+data "aws_iam_policy_document" "artifact_user_private" {
+  for_each = aws_ecr_repository.this
 
   statement {
     sid       = "AllowECR"
@@ -39,16 +39,44 @@ data "aws_iam_policy_document" "artifact_user" {
       "ecr:PutImage",
       "ecr:UploadLayerPart"
     ]
-    resources = compact([
-      try(aws_ecr_repository.this[each.key].arn, null),
-      try(aws_ecrpublic_repository.this[each.key].arn, null),
-    ])
+    resources = [
+      each.value.arn
+    ]
   }
 
   statement {
     sid       = "AllowECRAuthorization" # needed to login to ecr
     actions   = [
       "ecr:GetAuthorizationToken"
+    ]
+    resources = ["*"]
+  }
+}
+
+data "aws_iam_policy_document" "artifact_user_public" {
+  for_each = aws_ecrpublic_repository.this
+
+  statement {
+    sid       = "AllowECRPublic"
+    actions   = [
+      "ecr-public:BatchCheckLayerAvailability",
+      "ecr-public:BatchGetImage",
+      "ecr-public:CompleteLayerUpload",
+      "ecr-public:GetDownloadUrlForLayer",
+      "ecr-public:InitiateLayerUpload",
+      "ecr-public:PutImage",
+      "ecr-public:UploadLayerPart",
+    ]
+    resources = [
+      each.value.arn
+    ]
+  }
+
+  statement {
+    sid       = "AllowECRPublicAuthorization" # needed to login to ecr
+    actions   = [
+      "ecr-public:GetAuthorizationToken",
+      "sts:GetServiceBearerToken"
     ]
     resources = ["*"]
   }
