@@ -44,4 +44,12 @@ data "aws_iam_policy_document" "artifact_user" {
       try(aws_ecrpublic_repository.this[each.key].arn, null),
     ])
   }
+
+  statement {
+    sid       = "AllowECRAuthorization" # needed to login to ecr
+    actions   = [
+      "ecr:GetAuthorizationToken"
+    ]
+    resources = ["*"]
+  }
 }
